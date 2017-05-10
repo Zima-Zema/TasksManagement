@@ -25,7 +25,8 @@ namespace TasksManagement.Controllers.API
         }
         public IHttpActionResult GetCustomers()
         {
-            return Ok(_context.Users.Include(c => c.Team).Where(uu => uu.ViewFlag == true).ToList());
+            var role = roleManager.FindByName(RoleName.Admin).Users.First();
+            return Ok(_context.Users.Include(uu => uu.Team).Where(uu => uu.ViewFlag == true && !uu.Id.Contains(role.UserId)).ToList());
         }
 
         [HttpDelete]

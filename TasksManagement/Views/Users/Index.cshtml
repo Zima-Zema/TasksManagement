@@ -10,41 +10,83 @@
 <p>
     @Html.ActionLink("Create New", "New", null, new { @class = "btn btn-primary" })
 </p>
-<table class="table">
-    <tr>
-        
-        <th>
-            @Html.DisplayNameFor(model => model.FullName)
-        </th>
-       
-     
-        
-        <th>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </th>
-       
-        <th>Operation</th>
-    </tr>
+<table id="users" class="table table-hover table-bordered">
+    <thead>
+        <tr>
 
-@foreach (var item in Model)
-{
-    <tr>
-        
-        <td>
-            @Html.DisplayFor(modelItem => item.FullName)
-        </td>
-        
-        <td>
-            @Html.DisplayFor(modelItem => item.PhoneNumber)
-        </td>
-        
-        
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+
+
+
+            <th>
+                @Html.DisplayNameFor(model => model.Team)
+            </th>
+
+            <th>Operation</th>
+        </tr>
+    </thead>
+<tbody>
+
+</tbody>
 
 </table>
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+            var table = $("#users").DataTable({
+                ajax: {
+                    url: "/api/users",
+                    dataSrc:""
+                },
+                columns: [
+                    {
+                        data: "fullName",
+                        render: function (data,type,user) {
+                            return "<a href='/users/details/" + user.id + "'>" + user.fullName + "</a>"
+                        }
+                    },
+                    {
+                        data: "team.name"
+                    },
+                    {
+                        data: "id",
+                        render: function (data,type,user) {
+                            return "<button class='btn btn-danger btn-xs js-delete' data-customer-id=" + user.id + ">Delete</button>" + " | " + "<a class='btn btn-primary btn-xs' href='/users/edit/" + user.id + "'>Edit</a>";
+                        }
+                    }
+                ]
+            });
+
+            $("#users").on("click", ".js-delete", function () {
+                var delbutton = $(this);
+                bootbox.confirm("Are You Sure To Delete This Customer?!", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/users/" + delbutton.attr("data-customer-id"),
+                            method: "DELETE",
+                            success: function () {
+                                table.row(delbutton.parents("tr")).remove().draw();
+                            },
+                            error: function () {
+
+                            }
+
+
+                        });
+
+                    }
+
+
+                })
+
+            });
+
+        });
+
+    </script>
+
+}
