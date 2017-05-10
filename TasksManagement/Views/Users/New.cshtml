@@ -1,0 +1,81 @@
+﻿@model TasksManagement.ViewModel.UsersViewModel
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.UserRoles))
+{
+    <h2>Edit User</h2>
+}
+else
+{
+    <h2>New User</h2>
+}
+@using (Html.BeginForm("Save", "Users", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "Invalid Registration")
+    <div class="form-group">
+        @Html.LabelFor(m => m.User.FirstName)
+        @Html.TextBoxFor(m => m.User.FirstName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.User.FirstName)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.User.SecondName)
+        @Html.TextBoxFor(m => m.User.SecondName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.User.SecondName)
+    </div>
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.User.Email)
+        @Html.TextBoxFor(m => m.User.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.User.Email)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.User.UserName)
+        @Html.TextBoxFor(m => m.User.UserName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.User.UserName)
+    </div>
+
+    if (string.IsNullOrWhiteSpace(Model.User.PasswordHash))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Password)
+
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ConfirmPassword)
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ConfirmPassword)
+
+        </div>
+
+    }
+
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.User.Team_Key)
+        @Html.DropDownListFor(m => m.User.Team_Key, new SelectList(Model.Teams, "Id", "Name"), "Select Membership", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.User.Team_Key)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserRoles)
+        @Html.DropDownListFor(m => m.UserRoles, new SelectList(Model.Roles, "Name", "Name"), "Select Membership", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.UserRoles)
+    </div>
+    @Html.HiddenFor(mm => mm.User.Id)
+    @Html.AntiForgeryToken()
+    @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-default" })
+    <input type="submit" value="Save" class="btn btn-success " />
+
+}
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
